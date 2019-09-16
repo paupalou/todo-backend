@@ -1,32 +1,25 @@
-import express, { Express } from 'express';
+import express, { Express, Request, Response } from 'express';
+import bodyParser from 'body-parser';
+
 import getConnection from './db';
-import TodoBuilder from './todo/todo.model';
-import UserBuilder from './user/user.model';
+import UserController from './user/user.controller';
 
-const app: Express = express();
-app.set('port', process.env.port || 3000);
+export default async (): Promise<Express> => {
+  const app: Express = express();
+  app.set('port', process.env.port || 3000);
+  app.use(bodyParser.json());
 
-(async () => {
   const db = await getConnection();
-  const userBuilder = UserBuilder(db);
 
-  const user = new userBuilder({
-    username: 'pau',
-    password: 'pau'
-  })
-
-  await user.save(err => console.log(err.message));
-
-  db.connection.db.dropCollection('todos');
-
-  const todoBuilder = TodoBuilder(db);
-
-  const newTodo = new todoBuilder({
-    user,
-    title: 'Test todo'
+  app.get('/users', async (req: Request, res: Response) => {
+    const users = await UserController.getAllUsers(db);
+    res.send(users);
   });
 
-  newTodo.save();
-})();
+  app.post('/users', async (req: Request, res: Response) => {
+    const createUserStatus = await UserController.createUser(db, req.body);
+    res.sendStatus(createUserStatus);
+  });
 
-export default app;
+  return app;
+};

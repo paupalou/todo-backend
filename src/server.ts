@@ -1,8 +1,9 @@
-import app from './app';
+import initApp from './app';
 
-const port: number = app.get('port');
-const server = app.listen(port, () => {
-  console.log(`Server running at port ${port}`);
-});
-
-export default server;
+export default (async () => {
+  const app = await initApp();
+  const port: number = app.get('port');
+  return app.listen(port, () => {
+    console.log(`Server running at port ${port}`);
+  });
+})();

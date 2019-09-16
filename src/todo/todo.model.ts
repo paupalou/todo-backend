@@ -1,7 +1,13 @@
 import { Schema, Mongoose } from 'mongoose';
+import ITodo from './todo.interface';
 
 const todoSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, index: true, ref: 'User' },
+  user: {
+    type: Schema.Types.ObjectId,
+    index: true,
+    ref: 'User',
+    required: true
+  },
   title: { type: String, required: true },
   text: { type: String },
   created: { type: Date, default: Date.now },
@@ -9,4 +15,5 @@ const todoSchema = new Schema({
   done: { type: Boolean, default: false }
 });
 
-export default (connection: Mongoose) => connection.model('Todo', todoSchema);
+export default (connection: Mongoose) =>
+  connection.model<ITodo>('Todo', todoSchema);
