@@ -11,7 +11,7 @@ export default async (): Promise<Express> => {
 
   const db = await getConnection();
 
-  app.get('/users', async (req: Request, res: Response) => {
+  app.get('/users', async (_, res: Response) => {
     const users = await UserController.getAllUsers(db);
     res.send(users);
   });
