@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import signale from 'signale';
-import { Server } from 'http';
+import http, { Server } from 'http';
 import io from 'socket.io';
 
 import getConnection from './db';
@@ -35,12 +35,17 @@ export default async (): Promise<Express> => {
   defineAppRoutes(app);
 
   // socket
-  const server: Server = new Server(app);
-  server.listen(3333);
+  const server: Server = http.createServer(app);
+  server.listen(3333, '127.0.0.1');
   const socketServer = io(server);
 
   socketServer.on('connection', socket => {
-    console.log('a user connected');
+    const { address } = socket.handshake;
+    signale.start('user connected to socket');
+    console.log(socket.handshake.address);
+    socket.emit('ACTION/SOCKET-CONNECTED', {
+      address
+    });
   });
 
   app.set('socketServer', socketServer);

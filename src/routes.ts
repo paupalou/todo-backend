@@ -25,7 +25,7 @@ const defineAppRoutes = (app: Express): void => {
       const token = await Auth.generateToken(user.id);
       signale.success(`token generated for [${username}]`);
       const socketServer = app.get('socketServer');
-      socketServer.emit('prueba', 'tete');
+      socketServer.emit('ACTION/LOGIN', { user: username });
       return res.send(token);
     }
 
