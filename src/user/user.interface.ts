@@ -1,6 +1,8 @@
 import { Document } from 'mongoose';
 
-export default interface IUser extends Document {
+export interface UserParams {
   username: string;
-  created: Date;
+  created?: Date;
 }
+
+export default interface User extends UserParams, Document {}

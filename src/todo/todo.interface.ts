@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export default interface ITodo extends Document {
+export interface TodoParams extends Document {
   user: string;
   title: string;
   text?: string;
@@ -8,3 +8,5 @@ export default interface ITodo extends Document {
   modified?: Date;
   done: boolean;
 }
+
+export default interface Todo extends TodoParams, Document {}

@@ -1,26 +1,30 @@
-import { Mongoose } from 'mongoose';
+import signale from 'signale';
 
-import UserFactory from './user.model';
-import IUser from './user.interface';
-import HTTP from '../httpStatus';
+import User from './user.model';
+import IUser, { UserParams } from './user.interface';
 
-const getAllUsers = async (connection: Mongoose): Promise<Array<IUser>> => {
-  const { model } = UserFactory(connection);
-  const users = await model.find({});
+const getUser = async (username: string): Promise<IUser> => {
+  const user = await User.findOne({ username });
+  return user;
+};
+
+const getAllUsers = async (): Promise<Array<IUser>> => {
+  const users = await User.find();
   return users;
 };
 
-const createUser = async (connection: Mongoose, userAttributes: IUser): Promise<number> => {
-  const { create } = UserFactory(connection);
+const createUser = async (userParams: UserParams): Promise<boolean> => {
   try {
-    await create(userAttributes);
-    return HTTP.CREATED;
+    await User.create(userParams);
+    return true;
   } catch (e) {
-    return HTTP.BAD_REQUEST;
+    signale.fatal(e);
+    return false;
   }
 };
 
 export default {
+  getUser,
   getAllUsers,
   createUser
 };

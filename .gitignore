@@ -1,3 +1,5 @@
 dist
 node_modules
 
+SECRET_KEY
+EXISTENT_FILE_TEST

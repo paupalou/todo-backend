@@ -1,6 +1,7 @@
-import { Schema, Mongoose } from 'mongoose';
-import IUser from './user.interface';
+import mongoose, { Schema } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
+
+import IUser from './user.interface';
 
 const userSchema = new Schema({
   username: { type: String, required: true, unique: true },
@@ -9,18 +10,4 @@ const userSchema = new Schema({
 
 userSchema.plugin(uniqueValidator, { message: 'cannot use that username' });
 
-const UserFactory = (connection: Mongoose) => {
-  const collectionName = 'User';
-  const schema = userSchema;
-  const userModel = connection.model<IUser>(collectionName, schema);
-
-  return {
-    model: userModel,
-    create: (params: IUser) => {
-      const user = new userModel(params);
-      return user.save();
-    }
-  };
-};
-
-export default UserFactory;
+export default mongoose.model<IUser>('User', userSchema);
