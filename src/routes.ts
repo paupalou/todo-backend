@@ -26,7 +26,11 @@ const defineAppRoutes = (app: Express): void => {
       signale.success(`token generated for [${username}]`);
       const socketServer = app.get('socketServer');
       socketServer.emit('ACTION/LOGIN', { user: username });
-      return res.send(token);
+      res.cookie('token', `Bearer ${token}`, {
+        httpOnly: true,
+        sameSite: true
+      });
+      return res.sendStatus(HTTP.OK);
     }
 
     signale.error(`cannot login for user [${username}]`);
