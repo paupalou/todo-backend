@@ -1,4 +1,5 @@
 import { Express, Request, Response } from 'express';
+import { Server as SocketServer } from 'socket.io';
 import signale from 'signale';
 
 import UserController from './user/user.controller';
@@ -6,11 +7,30 @@ import TodoController from './todo/todo.controller';
 import HTTP from './httpStatus';
 import Auth from './auth';
 
+const TOKEN_MAPPING = '/token/validate';
 const LOGIN_MAPPING = '/login';
 const USERS_MAPPING = '/users';
 const TODOS_MAPPING = '/todos';
 
-const defineAppRoutes = (app: Express): void => {
+const defineAppRoutes = (app: Express, socketServer: SocketServer): void => {
+  app.get(TOKEN_MAPPING, async (req: Request, res: Response) => {
+    try {
+      const token = Auth.getRequestToken(req);
+      const userId = await Auth.getUserIdFromToken(token);
+
+      if (userId) {
+        const { username, _id } = await UserController.getUserById(userId);
+        socketServer.emit('ACTION/USE-TOKEN', { user: username });
+        return res.send({ userId: _id, username });
+      }
+    } catch (e) {
+      signale.fatal(e);
+      return res.sendStatus(HTTP.BAD_REQUEST);
+    }
+
+    res.sendStatus(HTTP.BAD_REQUEST);
+  });
+
   app.post(LOGIN_MAPPING, async (req: Request, res: Response) => {
     const { username } = req.body;
 
@@ -24,9 +44,8 @@ const defineAppRoutes = (app: Express): void => {
     if (user) {
       const token = await Auth.generateToken(user.id);
       signale.success(`token generated for [${username}]`);
-      const socketServer = app.get('socketServer');
       socketServer.emit('ACTION/LOGIN', { user: username });
-      res.cookie('token', `Bearer ${token}`, {
+      res.cookie('token', token, {
         httpOnly: true,
         sameSite: true
       });

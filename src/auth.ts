@@ -23,10 +23,16 @@ const generateToken = async (
 };
 
 const getRequestToken = (req: Request): string => {
-  const { authorization: token } = req.headers;
-  if (token) {
-    return token.slice(7, token.length);
+  const { authorization: authorizationToken } = req.headers;
+  if (authorizationToken) {
+    return authorizationToken.slice(7, authorizationToken.length);
   }
+
+  const { token: cookieToken } = req.cookies;
+  if (cookieToken) {
+    return cookieToken;
+  }
+
   throw Error('auth required');
 };
 
@@ -34,16 +40,9 @@ const getUserIdFromToken = async (
   token: string,
   secretKeyFileName = 'SECRETKEY'
 ): Promise<string> => {
-  let secretKey: string;
-
-  try {
-    secretKey = await readFileAsync(secretKeyFileName, 'utf-8');
-    const decoded: any = jwt.verify(token, secretKey);
-    return decoded.userId;
-  } catch (e) {
-    console.error('token invalid');
-    console.error(e);
-  }
+  const secretKey = await readFileAsync(secretKeyFileName, 'utf-8');
+  const decoded: any = jwt.verify(token, secretKey);
+  return decoded.userId;
 };
 
 export default {

@@ -24,7 +24,10 @@ const deleteTodo = async ({
 }: DeleteTodoParams): Promise<boolean> => {
   try {
     const todo: ITodo = await Todo.findById(todoId);
-    if (todo.user === userId) {
+    console.log(`todo user: [${todo.user}] ${typeof todo.user}`);
+    console.log(`expected user: [${userId}] ${typeof userId}`);
+    if (todo.user.toString() === userId) {
+      console.log('NO');
       await Todo.deleteOne(todo);
       return true;
     }

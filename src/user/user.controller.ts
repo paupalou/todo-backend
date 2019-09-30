@@ -3,6 +3,11 @@ import signale from 'signale';
 import User from './user.model';
 import IUser, { UserParams } from './user.interface';
 
+const getUserById = async (userId: string): Promise<IUser> => {
+  const user = await User.findById(userId);
+  return user;
+};
+
 const getUser = async (username: string): Promise<IUser> => {
   const user = await User.findOne({ username });
   return user;
@@ -24,6 +29,7 @@ const createUser = async (userParams: UserParams): Promise<boolean> => {
 };
 
 export default {
+  getUserById,
   getUser,
   getAllUsers,
   createUser
