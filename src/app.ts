@@ -40,10 +40,14 @@ export default async (): Promise<Express> => {
   const socketServer: SocketServer = io(server);
 
   socketServer.on('connection', socket => {
-    const { address } = socket.handshake;
-    signale.start('user connected to socket');
-    socket.emit('ACTION/SOCKET-CONNECTED', {
-      address
+    socket.on('join', room => {
+      signale.start(`user ${room} joined the room`);
+      socket.join(room);
+    });
+
+    socket.on('leave', room => {
+      signale.complete(`user ${room} left the room`);
+      socket.leave(room);
     });
   });
 

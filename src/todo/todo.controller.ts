@@ -3,10 +3,10 @@ import signale from 'signale';
 import Todo from './todo.model';
 import ITodo, { TodoParams } from './todo.interface';
 
-const createTodo = async (todoParams: TodoParams): Promise<boolean> => {
+const createTodo = async (todoParams: TodoParams): Promise<ITodo | boolean> => {
   try {
-    await Todo.create(todoParams);
-    return true;
+    const todo = await Todo.create(todoParams);
+    return todo;
   } catch (e) {
     console.error(e);
     return false;
