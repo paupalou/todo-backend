@@ -124,14 +124,73 @@
 		{
 			"name": "CREATE TODO",
 			"request": {
-				"method": "GET",
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZDhiMzUxNmNiN2RjMTJkMDNjOTg0N2EiLCJpYXQiOjE1Njk4NTg0MTJ9.wNE2JJw373JN6GBcic37EkJ4kLguvzxE9NlpANCr-II",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"title\": \"Gilipollas\" }"
+				},
+				"url": {
+					"raw": "http://localhost:3000/todos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE TODO",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZDhiMzUxNmNiN2RjMTJkMDNjOTg0N2EiLCJpYXQiOjE1Njk4NTg0MTJ9.wNE2JJw373JN6GBcic37EkJ4kLguvzxE9NlpANCr-II",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
 				"header": [],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:3000/todos/5d935d0e6044bd784e6b5a68",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"todos",
+						"5d935d0e6044bd784e6b5a68"
+					]
 				}
 			},
 			"response": []
