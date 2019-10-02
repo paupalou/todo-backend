@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-import ITodo from './todo.interface';
+import ITodo from './interface';
 
 const todoSchema = new Schema({
   user: {

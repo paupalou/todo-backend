@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
-import IUser from './user.interface';
+import IUser from './interface';
 
 const userSchema = new Schema({
   username: { type: String, required: true, unique: true },

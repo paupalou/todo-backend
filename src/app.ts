@@ -6,7 +6,7 @@ import http, { Server } from 'http';
 import io, { Server as SocketServer } from 'socket.io';
 
 import getConnection from './db';
-import defineAppRoutes from './routes';
+import defineAppRoutes from './router';
 
 const requestLogger = (req: Request, _: Response, next: Function): void => {
   let queryParams = '';

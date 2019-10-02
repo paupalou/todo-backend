@@ -30,5 +30,6 @@ describe('generateToken', () => {
 
     expect(token).toBeTruthy();
     expect(jwt.verify(token, secretKey)).toBeTruthy();
+    fs.unlinkSync(secretKeyFileName);
   });
 });

@@ -1,7 +1,7 @@
 import signale from 'signale';
 
-import User from './user.model';
-import IUser, { UserParams } from './user.interface';
+import User from './model';
+import IUser, { UserParams } from './interface';
 
 const getUserById = async (userId: string): Promise<IUser> => {
   const user = await User.findById(userId);
