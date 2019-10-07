@@ -7,9 +7,4 @@ export default (async (): Promise<void> => {
   app.listen(port, () => {
     signale.info(`Server running at port ${port}`);
   });
-
-  app.use((req, res, next) => {
-    signale.debug(`Request Type ${req.method}`);
-    next();
-  });
 })();

@@ -27,7 +27,7 @@ const requestLogger = (req: Request, _: Response, next: Function): void => {
 export default async (): Promise<Express> => {
   const app: Express = express();
 
-  app.set('port', process.env.port || 3000);
+  app.set('port', process.env.port || 5000);
   app.use(bodyParser.json());
   app.use(cookieParser());
   app.use(requestLogger);

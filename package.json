@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "build": "tsc -p .",
+    "run": "node dist/server.js",
     "watch:ts": "tsc -w -p . ",
     "run-watch:server": "nodemon dist/server.js",
-    "dev": "run-s watch:ts run-watch:server"
+    "dev": "run-s watch:ts run-watch:server",
+    "start": "run-s build run"
   },
   "keywords": [],
   "author": "",

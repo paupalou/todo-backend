@@ -25,7 +25,6 @@ const createTodo = (socket: SocketServer) => async (
     socket.to(todo.user).emit('TODO#CREATE', todo);
     return todo;
   } catch (e) {
-    console.error(e);
     return false;
   }
 };
@@ -68,7 +67,6 @@ const toggleTodo = (socket: SocketServer) => async ({
 }: UserTodoParams): Promise<boolean> => {
   try {
     const todo: ITodo = await Todo.findById(todoId);
-    console.log(todo);
     if (todo.user.toString() === userId) {
       todo.done = !todo.done;
       await todo.save();
