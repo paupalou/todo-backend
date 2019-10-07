@@ -7,6 +7,8 @@ import Auth from './../auth';
 
 const checkToken: RouteType = async (req, res) => {
   const token = Auth.getRequestToken(req);
+  await sleep();
+
   if (!token) {
     signale.warn('token not present');
     return res.sendStatus(HTTP.BAD_REQUEST);
@@ -16,7 +18,6 @@ const checkToken: RouteType = async (req, res) => {
 
   if (userId) {
     const { username, _id } = await UserService.getUserById(userId);
-    await sleep();
     return res.send({ userId: _id, username });
   }
 

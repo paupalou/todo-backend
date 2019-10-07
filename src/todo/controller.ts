@@ -17,7 +17,7 @@ const getUserTodos = (todoService: TodoService): RouteType => async (
     res.send(todos);
   } catch (e) {
     signale.fatal(e);
-    res.sendStatus(HTTP.BAD_REQUEST);
+    res.sendStatus(HTTP.NOT_FOUND);
   }
 };
 
@@ -40,10 +40,10 @@ const createTodo = (todoService: TodoService): RouteType => async (
     }
 
     signale.error(`cannot create ToDo (${todoParams.title})`);
-    res.sendStatus(HTTP.BAD_REQUEST);
+    res.sendStatus(HTTP.NOT_FOUND);
   } catch (e) {
     signale.fatal(e);
-    res.sendStatus(HTTP.BAD_REQUEST);
+    res.sendStatus(HTTP.NOT_FOUND);
   }
 };
 
@@ -60,15 +60,38 @@ const deleteTodo = (todoService: TodoService): RouteType => async (
       userId
     });
     if (todoDeleted) {
-      // socketServer.to(userId).emit('TODO#DELETE', todoId);
       res.sendStatus(HTTP.DELETED);
       return;
     }
 
-    res.sendStatus(HTTP.BAD_REQUEST);
+    res.sendStatus(HTTP.NOT_FOUND);
   } catch (e) {
     signale.fatal(e);
-    res.sendStatus(HTTP.BAD_REQUEST);
+    res.sendStatus(HTTP.NOT_FOUND);
+  }
+};
+
+const toggleTodo = (todoService: TodoService): RouteType => async (
+  req,
+  res
+) => {
+  const { todoId } = req.params;
+  try {
+    const token = Auth.getRequestToken(req);
+    const userId = await Auth.getUserIdFromToken(token);
+    const todoToggled = await todoService.toggleTodo({
+      todoId,
+      userId
+    });
+    if (todoToggled) {
+      res.sendStatus(HTTP.NO_CONTENT);
+      return;
+    }
+
+    res.sendStatus(HTTP.NOT_FOUND);
+  } catch (e) {
+    signale.fatal(e);
+    res.sendStatus(HTTP.NOT_FOUND);
   }
 };
 
@@ -77,6 +100,7 @@ const TodoControllerFactory = (socket: SocketServer) => {
 
   return {
     getUserTodos: getUserTodos(todoService),
+    toggleTodo: toggleTodo(todoService),
     createTodo: createTodo(todoService),
     deleteTodo: deleteTodo(todoService)
   };

@@ -10,7 +10,7 @@ import TodoControllerFactory from './todo/controller';
 type RouteType = (req: Request, res: Response) => Promise<any>;
 
 // trick to make delay on calls
-const sleep = (ms: number = Math.random() * 1500): Promise<any> =>
+const sleep = (ms: number = Math.random() * 2500): Promise<any> =>
   new Promise(resolve => {
     setTimeout(resolve, ms);
   });
@@ -30,6 +30,7 @@ const defineAppRoutes = (app: Express, socketServer: SocketServer): void => {
   // Todos Routes Mappings
   app.get(TodoRoutes.getUserTodos, todoController.getUserTodos);
   app.post(TodoRoutes.createTodo, todoController.createTodo);
+  app.put(TodoRoutes.toggleTodo, todoController.toggleTodo);
   app.delete(TodoRoutes.deleteTodo, todoController.deleteTodo);
 };
 

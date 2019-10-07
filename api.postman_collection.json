@@ -194,6 +194,40 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "TOGGLE TODO",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZDdmMzFkN2VhNzUzNzE4ODgxZjQ3NjQiLCJpYXQiOjE1NzAwMTQ4MTR9.PZb1vpim-4FtDj06m__tUgZk32840kgvSeyQrfJ7flc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/todos/5d935d0e6044bd784e6b5a68",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"todos",
+						"5d935d0e6044bd784e6b5a68"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

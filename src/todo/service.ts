@@ -54,7 +54,7 @@ const getUserTodos = async (userId: string): Promise<Array<ITodo>> => {
     const userTodos = await Todo.find(
       { user: userId },
       'done title text created'
-    );
+    ).sort('-created');
     return userTodos;
   } catch (e) {
     /* handle error */
@@ -62,15 +62,17 @@ const getUserTodos = async (userId: string): Promise<Array<ITodo>> => {
   }
 };
 
-const toggleTodo = async ({
+const toggleTodo = (socket: SocketServer) => async ({
   todoId,
   userId
 }: UserTodoParams): Promise<boolean> => {
   try {
     const todo: ITodo = await Todo.findById(todoId);
+    console.log(todo);
     if (todo.user.toString() === userId) {
       todo.done = !todo.done;
       await todo.save();
+      socket.to(userId).emit('TODO#TOGGLE', todo.id);
       signale.success(
         `todo ${todoId} toggled to ${todo.done ? 'done' : 'undone'}`
       );
@@ -88,7 +90,7 @@ const TodoServiceFactory = (socket: SocketServer) => {
     getUserTodos,
     createTodo: createTodo(socket),
     deleteTodo: deleteTodo(socket),
-    toggleTodo
+    toggleTodo: toggleTodo(socket)
   };
 };
 
