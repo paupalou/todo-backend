@@ -39,7 +39,13 @@ const getUserIdFromToken = async (
   token: string,
   secretKeyFileName = 'SECRETKEY'
 ): Promise<string> => {
-  const secretKey = await readFileAsync(secretKeyFileName, 'utf-8');
+  let secretKey;
+  try {
+    secretKey = await readFileAsync(secretKeyFileName, 'utf-8');
+  } catch (e) {
+    secretKey = 'secret'
+  }
+
   const decoded: any = jwt.verify(token, secretKey);
   return decoded.userId;
 };
