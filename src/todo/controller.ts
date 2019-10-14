@@ -34,7 +34,6 @@ const createTodo = (todoService: TodoService): RouteType => async (
       user: userId
     });
     if (todoCreated) {
-      signale.success(`ToDo (${todoParams.title}) created!`);
       res.sendStatus(HTTP.CREATED);
       return;
     }
