@@ -1,0 +1,9 @@
+#vi ft=Dockerfile
+FROM node:10
+WORKDIR /app
+RUN apt-get -q update && apt-get -qy install netcat
+COPY package.json ./
+COPY wait-for ./
+RUN npm install --production --package-lock false --silent
+RUN npm install nodemon --package-lock false --silent
+CMD ["tail", "-f", "/dev/null"]

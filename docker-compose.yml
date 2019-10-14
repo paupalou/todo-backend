@@ -8,5 +8,33 @@ services:
     volumes:
       - db-data:/data/db
 
+  build-dev:
+    build:
+      context: ./
+      dockerfile: Dockerfile.node-dev
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - backend-build:/usr/src/app/dist
+    command: npm run dev:build
+
+  express:
+    build:
+      context: ./
+      dockerfile: Dockerfile.express
+    ports:
+      - 5000:5000
+      - 3333:3333
+    volumes:
+      - type: volume
+        source: backend-build
+        target: /app/build
+    working_dir: /app
+    command: sh -c './wait-for -t 30 build-dev:80 -- npm run dev:server'
+    depends_on:
+      - db
+      - build-dev
+
 volumes:
   db-data:
+  backend-build:
