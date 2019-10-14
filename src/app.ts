@@ -36,7 +36,7 @@ export default async (): Promise<Express> => {
 
   // socket
   const server: Server = http.createServer(app);
-  server.listen(3333, '127.0.0.1');
+  server.listen(3333);
   const socketServer: SocketServer = io(server);
 
   socketServer.on('connection', socket => {
