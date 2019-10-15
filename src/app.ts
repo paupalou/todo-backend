@@ -9,18 +9,16 @@ import getConnection from './db';
 import defineAppRoutes from './router';
 
 const requestLogger = (req: Request, _: Response, next: Function): void => {
-  let queryParams = '';
-  let body = '';
+  signale.log({message: `[${req.method}] ${req.url}`, color:'yellow'});
 
   if (Object.keys(req.params).length > 0) {
-    queryParams = `| query params: ${JSON.stringify(req.params)}`;
+    signale.log(`query params: ${JSON.stringify(req.params, null, 2)}`);
   }
 
   if (Object.keys(req.body).length > 0) {
-    body = `| body: ${JSON.stringify(req.body)}`;
+    signale.log(`body: ${JSON.stringify(req.body, null, 2)}`);
   }
 
-  signale.log(`[${req.method}] ${req.url} ${queryParams}${body}`);
   next();
 };
 
