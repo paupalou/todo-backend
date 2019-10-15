@@ -15,4 +15,5 @@ const todoSchema = new Schema({
   done: { type: Boolean, default: false }
 });
 
+export { todoSchema };
 export default mongoose.model<ITodo>('Todo', todoSchema);
