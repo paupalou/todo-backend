@@ -4,14 +4,21 @@ services:
   db:
     image: mongo:4.2
     ports:
-      - "27017:27017"
+      - 27017:27017
+    restart: always
+    environment:
+      - TZ=Europe/Madrid
+      - MONGO_LOG_DIR=/dev/null
     volumes:
       - db-data:/data/db
+    command: mongod --logpath=/dev/null
 
-  build-dev:
+  node-ts:
     build:
       context: ./
       dockerfile: Dockerfile.node-dev
+    environment:
+      - TZ=Europe/Madrid
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -25,15 +32,17 @@ services:
     ports:
       - 5000:5000
       - 3333:3333
+    environment:
+      - TZ=Europe/Madrid
     volumes:
       - type: volume
         source: backend-build
         target: /app/build
     working_dir: /app
-    command: sh -c './wait-for -t 30 build-dev:80 -- npm run dev:server'
+    command: sh -c './wait-for -t 30 node-ts:80 -- npm run dev:server'
     depends_on:
       - db
-      - build-dev
+      - node-ts
 
 volumes:
   db-data:
