@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import { promisify } from 'util';
 import jwt from 'jsonwebtoken';
 import { Request } from 'express';
-import signale from 'signale';
 
 const readFileAsync = promisify(fs.readFile);
 
@@ -16,7 +15,6 @@ const generateToken = async (
     secretKey = await readFileAsync(secretKeyFileName, 'utf-8');
     token = jwt.sign({ userId }, secretKey);
   } catch (e) {
-    signale.error(`${secretKeyFileName} file not found, using 'secret' as key`);
     token = jwt.sign({ userId }, 'secret');
   }
 

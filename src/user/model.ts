@@ -10,4 +10,5 @@ const userSchema = new Schema({
 
 userSchema.plugin(uniqueValidator, { message: 'cannot use that username' });
 
+export { userSchema };
 export default mongoose.model<IUser>('User', userSchema);
