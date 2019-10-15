@@ -15,8 +15,8 @@ const getUserTodos = (todoService: TodoService): RouteType => async (
     const userId = await Auth.getUserIdFromToken(token);
     const todos = await todoService.getUserTodos(userId);
     res.send(todos);
-  } catch (e) {
-    signale.fatal(e);
+  } catch ({ message }) {
+    signale.error(message);
     res.sendStatus(HTTP.NOT_FOUND);
   }
 };

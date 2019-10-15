@@ -33,6 +33,8 @@ const getRequestToken = (req: Request): string => {
   if (cookieToken) {
     return cookieToken;
   }
+
+  throw Error('token not present');
 };
 
 const getUserIdFromToken = async (

@@ -49,16 +49,12 @@ const deleteTodo = (socket: SocketServer) => async ({
 };
 
 const getUserTodos = async (userId: string): Promise<Array<ITodo>> => {
-  try {
-    const userTodos = await Todo.find(
-      { user: userId },
-      'done title text created'
-    ).sort('-created');
-    return userTodos;
-  } catch (e) {
-    /* handle error */
-    return [];
-  }
+  const userTodos = await Todo.find(
+    { user: userId },
+    'done title text created'
+  ).sort('-created');
+
+  return userTodos;
 };
 
 const toggleTodo = (socket: SocketServer) => async ({

@@ -46,8 +46,8 @@ const login: RouteType = async (req, res) => {
     return res.send({ username, userId: user.id });
   }
 
-  signale.error(`cannot login for user [${username}]`);
-  res.sendStatus(HTTP.BAD_REQUEST);
+  signale.error(`user [${username}] doest not exists`);
+  res.sendStatus(HTTP.NOT_FOUND);
 };
 
 const logout: RouteType = async (req, res) => {
