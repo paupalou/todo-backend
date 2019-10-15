@@ -19,6 +19,7 @@ services:
       dockerfile: Dockerfile.node-dev
     environment:
       - TZ=Europe/Madrid
+    tty: true
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -34,6 +35,7 @@ services:
       - 3333:3333
     environment:
       - TZ=Europe/Madrid
+    tty: true
     volumes:
       - type: volume
         source: backend-build
