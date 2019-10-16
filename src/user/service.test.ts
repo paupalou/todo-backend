@@ -1,81 +1,61 @@
 import mongoose from 'mongoose';
-import mockingoose from 'mockingoose';
 
-import User, { userSchema } from './model';
 import UserService from './service';
+
+jest.mock('./model');
 
 describe('User Service', () => {
   beforeEach(() => {
-    mockingoose.resetAll();
     jest.clearAllMocks();
   });
 
   test('getUserById', async () => {
-    const userId = mongoose.Types.ObjectId();
+    const userId = mongoose.Types.ObjectId().toString();
+    const expectedUser = { _id: userId, username: 'TEST' };
 
-    const expectedUser = {
-      _id: userId,
-      username: 'TEST'
-    };
-
-    mockingoose(User).toReturn(expectedUser, 'findOne');
-    const user = await UserService.getUserById(undefined);
+    const serviceSpy = jest.spyOn(UserService, 'getUserById');
+    const user = await UserService.getUserById(userId);
 
     expect(user).toBeTruthy();
     expect(user).toHaveProperty('username');
     expect(user.username).toEqual('TEST');
+    expect(user).toMatchObject(expectedUser);
+    expect(serviceSpy).toHaveBeenCalled();
   });
 
   test('getUser', async () => {
-    const userId = mongoose.Types.ObjectId();
-
-    const expectedUser = {
-      _id: userId,
-      username: 'TEST'
-    };
-
-    mockingoose(User).toReturn(expectedUser, 'findOne');
+    const serviceSpy = jest.spyOn(UserService, 'getUser');
     const user = await UserService.getUser('TEST');
 
     expect(user).toBeTruthy();
+    expect(user).toHaveProperty('_id');
     expect(user).toHaveProperty('username');
-    expect(user._id).toEqual(userId);
+    expect(user.username).toEqual('TEST');
+    expect(serviceSpy).toHaveBeenCalled();
   });
 
-  test('getAllUsers', async () => {
-    const firstUserId = mongoose.Types.ObjectId();
-    const secondUserId = mongoose.Types.ObjectId();
+  test('getAllUsers return array of users', async () => {
+    const serviceSpy = jest.spyOn(UserService, 'getAllUsers');
+    const users = await UserService.getAllUsers();
 
-    const expectedUsers = [
-      {
-        _id: firstUserId,
-        username: 'TEST'
-      },
-      {
-        _id: secondUserId,
-        username: 'TEST2'
-      }
-    ];
+    expect(users).toBeInstanceOf(Array);
+    expect(users).toHaveLength(2);
 
-    mockingoose(User).toReturn(expectedUsers, 'find');
-    const [firstUser, secondUser] = await UserService.getAllUsers();
-
+    const [firstUser, secondUser] = users;
     expect(firstUser).toBeTruthy();
     expect(secondUser).toBeTruthy();
+
     expect(firstUser).toHaveProperty('username');
     expect(secondUser).toHaveProperty('username');
-    expect(firstUser._id).toEqual(firstUserId);
-    expect(secondUser._id).toEqual(secondUserId);
+
+    expect(firstUser.username).toEqual('TEST');
+    expect(secondUser.username).toEqual('TEST2');
+
+    expect(serviceSpy).toHaveBeenCalled();
   });
 
   test('createUser', async () => {
-    const conn = mongoose.createConnection();
-    const UserSchemaMocked = new mongoose.Schema(userSchema);
-    const UserModelMocked = conn.model('UserMocked', UserSchemaMocked);
-    const user = await UserModelMocked.create({ username: 'TEST' });
-
-    expect(user).toBeInstanceOf(UserModelMocked);
-    expect(user).toHaveProperty('_id');
-    expect(user).toHaveProperty('created');
+    const userCreated = await UserService.createUser({ username: 'TEST' });
+    expect(userCreated).toBeTruthy();
   });
 });

@@ -54,7 +54,8 @@
       "^.+\\.ts$": "ts-jest"
     },
     "testEnvironment": "node",
-    "verbose": true
+    "verbose": true,
+    "modulePathIgnorePatterns": ["<rootDir>/.*/__mocks__"]
   },
   "signale": {
     "displayTimestamp": true
