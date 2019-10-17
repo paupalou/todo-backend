@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import ITodo, { TodoParams } from './../interface';
 
-const listOfDummyTodos: Array<Partial<ITodo>> = [
+const listOfDummyTodos: Array<any> = [
   {
     _id: mongoose.Types.ObjectId().toString(),
     title: 'TODO',
@@ -11,11 +11,11 @@ const listOfDummyTodos: Array<Partial<ITodo>> = [
   {
     _id: mongoose.Types.ObjectId().toString(),
     title: 'TODO2',
+    text: 'Lorem Ipsum',
     done: false,
     created: new Date()
   }
 ];
-
 
 export default {
   find: (args: TodoParams): Array<Partial<ITodo>> => {
@@ -24,6 +24,15 @@ export default {
     // }
 
     // if (args.user) {
+    // const a = await query.find();
+    // a.push({
+    //   _id: mongoose.Types.ObjectId().toString(),
+    //   title: 'TODO',
+    //   done: false,
+    //   created: new Date()
+    // });
+    // const result = await query.exec();
+
     return listOfDummyTodos;
     // }
 

@@ -52,9 +52,18 @@ const getUserTodos = async (userId: string): Promise<Array<ITodo>> => {
   const userTodos = await Todo.find(
     { user: userId },
     'done title text created'
-  ).sort('-created');
+  );
+  return userTodos.sort((a, b) => {
+    if (a.created > b.created) {
+      return 1;
+    }
 
-  return userTodos;
+    if (b.created > a.created) {
+      return -1;
+    }
+
+    return 0;
+  });
 };
 
 const toggleTodo = (socket: SocketServer) => async ({

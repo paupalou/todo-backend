@@ -6,19 +6,18 @@ import HTTP from './../httpStatus';
 import Auth from './../auth';
 
 const checkToken: RouteType = async (req, res) => {
-  const token = Auth.getRequestToken(req);
-  await sleep();
+  try {
+    const token = Auth.getRequestToken(req);
+    await sleep();
 
-  if (!token) {
+    const userId = await Auth.getUserIdFromToken(token);
+    if (userId) {
+      const { username, _id } = await UserService.getUserById(userId);
+      return res.send({ userId: _id, username });
+    }
+  } catch ({ message }) {
     signale.warn('token not present');
     return res.sendStatus(HTTP.BAD_REQUEST);
-  }
-
-  const userId = await Auth.getUserIdFromToken(token);
-
-  if (userId) {
-    const { username, _id } = await UserService.getUserById(userId);
-    return res.send({ userId: _id, username });
   }
 
   res.sendStatus(HTTP.BAD_REQUEST);

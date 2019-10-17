@@ -9,4 +9,4 @@ export interface TodoParams extends Document {
   done: boolean;
 }
 
-export default interface Todo extends TodoParams, Document {}
+export default interface Todo extends TodoParams {}
