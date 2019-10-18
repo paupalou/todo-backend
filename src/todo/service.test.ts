@@ -1,17 +1,45 @@
-import mongoose from 'mongoose';
-
 import ToDoService from './service';
 
 jest.mock('./model');
 
 describe('ToDo Service', () => {
-  const todoService = ToDoService(undefined);
+  const userId = '507f1f77bcf86cd799439011';
+
+  const mockedTodo = {
+    _id: '5da99282bef2a1eee75f7caa',
+    title: 'TODO',
+    done: false,
+    created: new Date(),
+    user: userId,
+    save: (): Promise<any> => Promise.resolve(true)
+  };
+
+  const mockedSocket: any = jest.fn().mockImplementation(() => ({
+    to: (_: any) => ({
+      emit: (event: string, todo: string): void => {
+        switch (event) {
+          case 'TODO#CREATE':
+            break;
+          case 'TODO#TOGGLE': {
+            if (todo === mockedTodo._id) {
+              mockedTodo.done = !mockedTodo.done;
+            }
+            break;
+          }
+          default:
+            return undefined;
+        }
+      }
+    })
+  }));
+
+  const todoService = ToDoService(mockedSocket());
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   test('getUserTodos', async () => {
-    const userId = mongoose.Types.ObjectId();
     const serviceSpy = jest.spyOn(todoService, 'getUserTodos');
     const todos = await todoService.getUserTodos(userId.toString());
     const [first, second] = todos;
@@ -30,39 +58,35 @@ describe('ToDo Service', () => {
     expect(serviceSpy).toHaveBeenCalled();
   });
 
-  // test('toggleTodo', async () => {
+  test('toggleTodo', async () => {
+    const serviceSpy = jest.spyOn(todoService, 'toggleTodo');
+    const todoToggled = await todoService.toggleTodo({
+      todoId: mockedTodo._id,
+      userId
+    });
 
-  //   const conn = mongoose.createConnection();
-  //   const TodoSchemaMocked = new mongoose.Schema(todoSchema);
-  //   const TodoModelMocked = conn.model('UserMocked', UserSchemaMocked);
-  //   const todo = await TodoModelMocked.toggleTodo();
+    expect(todoToggled).toBeTruthy();
+    expect(mockedTodo.done).toBeTruthy();
+    expect(serviceSpy).toHaveBeenCalled();
+  });
 
-  //   const userId = mongoose.Types.ObjectId();
+  test('createTodo', async () => {
+    const serviceSpy = jest.spyOn(todoService, 'createTodo');
+    const todoCreated = await todoService.createTodo({
+      user: userId,
+      title: mockedTodo.title,
+      created: mockedTodo.created,
+      done: mockedTodo.done
+    });
 
-  //   mockingoose(ToDo).toReturn(
-  //     [
-  //       {
-  //         title: 'TEST_TODO'
-  //       },
-  //       {
-  //         title: 'TEST_TODO2',
-  //         text: 'Lorem Ipsum'
-  //       }
-  //     ],
-  //     'find'
-  //   );
-  //   const todos = await ToDoService(undefined).getUserTodos(userId.toString());
-  //   const [first, second] = todos;
+    expect(todoCreated).toBeTruthy();
 
-  //   expect(todos).toBeTruthy();
-  //   expect(todos).toHaveLength(2);
+    if (typeof todoCreated === 'object') {
+      const { save: saveFromReceived, ...todoReceived } = todoCreated;
+      const { save: saveFromExpected, ...todoExpected } = mockedTodo;
+      expect(todoReceived).toEqual(todoExpected);
+    }
 
-  //   expect(first).toHaveProperty('title');
-  //   expect(first.title).toEqual('TEST_TODO');
-
-  //   expect(second).toHaveProperty('title');
-  //   expect(second.title).toEqual('TEST_TODO2');
-  //   expect(second).toHaveProperty('text');
-  //   expect(second.text).toEqual('Lorem Ipsum');
-  // });
+    expect(serviceSpy).toHaveBeenCalled();
+  });
 });

@@ -17,7 +17,7 @@ interface UserTodoParams {
 }
 
 const createTodo = (socket: SocketServer) => async (
-  todoParams: TodoParams
+  todoParams: Partial<TodoParams>
 ): Promise<ITodo | boolean> => {
   try {
     const todo = await Todo.create(todoParams);
@@ -75,7 +75,7 @@ const toggleTodo = (socket: SocketServer) => async ({
     if (todo.user.toString() === userId) {
       todo.done = !todo.done;
       await todo.save();
-      socket.to(userId).emit('TODO#TOGGLE', todo.id);
+      socket.to(userId).emit('TODO#TOGGLE', todo._id);
       signale.success(
         `todo ${todoId} toggled to ${todo.done ? 'done' : 'undone'}`
       );
@@ -84,6 +84,7 @@ const toggleTodo = (socket: SocketServer) => async ({
     signale.warn(`user ${userId} does not belong todo ${todoId}`);
     return false;
   } catch (e) {
+    signale.fatal(e);
     return false;
   }
 };

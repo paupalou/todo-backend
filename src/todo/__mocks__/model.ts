@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import ITodo, { TodoParams } from './../interface';
 
-const listOfDummyTodos: Array<any> = [
+const listOfDummyTodos: Array<Partial<ITodo>> = [
   {
     _id: mongoose.Types.ObjectId().toString(),
     title: 'TODO',
@@ -17,28 +17,26 @@ const listOfDummyTodos: Array<any> = [
   }
 ];
 
+const mockedTodo: Partial<ITodo> = {
+  _id: '5da99282bef2a1eee75f7caa',
+  title: 'TODO',
+  done: false,
+  created: new Date(),
+  user: '507f1f77bcf86cd799439011',
+  save: (): Promise<any> => Promise.resolve(true)
+};
+
 export default {
-  find: (args: TodoParams): Array<Partial<ITodo>> => {
-    // if (!args || Object.keys(args).length === 0) {
-    //   return [];
-    // }
-
-    // if (args.user) {
-    // const a = await query.find();
-    // a.push({
-    //   _id: mongoose.Types.ObjectId().toString(),
-    //   title: 'TODO',
-    //   done: false,
-    //   created: new Date()
-    // });
-    // const result = await query.exec();
-
+  find: (_: TodoParams): Array<Partial<ITodo>> => {
     return listOfDummyTodos;
-    // }
-
-    // return [];
   },
-  sort: (s: string): undefined => {
-    return undefined;
-  }
+  findById: (todoId: string): Partial<ITodo> => {
+    if (todoId === '5da99282bef2a1eee75f7caa') {
+      return mockedTodo;
+    }
+  },
+  create: (params: TodoParams): Partial<ITodo> => ({
+    ...mockedTodo,
+    ...params
+  })
 };
