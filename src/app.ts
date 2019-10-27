@@ -4,9 +4,11 @@ import cookieParser from 'cookie-parser';
 import signale from 'signale';
 import http, { Server } from 'http';
 import io, { Server as SocketServer } from 'socket.io';
+import { ApolloServer } from 'apollo-server-express';
 
 import getConnection from './db';
 import defineAppRoutes from './router';
+import Books from './schema.gql';
 
 const requestLogger = (req: Request, _: Response, next: Function): void => {
   signale.log();
@@ -35,6 +37,11 @@ export default async (): Promise<Express> => {
   app.use(requestLogger);
 
   await getConnection();
+
+  // graphql
+  const { typeDefs, resolvers } = Books;
+  const graphqlServer = new ApolloServer({ typeDefs, resolvers });
+  graphqlServer.applyMiddleware({ app });
 
   // socket
   const server: Server = http.createServer(app);
