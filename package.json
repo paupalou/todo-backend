@@ -55,7 +55,9 @@
     },
     "testEnvironment": "node",
     "verbose": true,
-    "modulePathIgnorePatterns": ["<rootDir>/.*/__mocks__"]
+    "modulePathIgnorePatterns": [
+      "<rootDir>/.*/__mocks__"
+    ]
   },
   "signale": {
     "displayTimestamp": true
