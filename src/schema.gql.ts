@@ -30,9 +30,9 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     users: (): Promise<User[]> => UserService.getAllUsers(),
-    getUserTodos: async (_, args: any): Promise<Todo[]> => {
+    getUserTodos: async (_: any, args: any): Promise<Todo[]> => {
       console.log(args.id);
-      const todos = await TodoService(undefined).getUserTodos(args.id)
+      const todos = await TodoService(undefined).getUserTodos(args.id);
       console.log(todos);
 
       return todos;

@@ -1,32 +1,15 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import signale from 'signale';
 import http, { Server } from 'http';
+import signale from 'signale';
 import io, { Server as SocketServer } from 'socket.io';
 import { ApolloServer } from 'apollo-server-express';
 
+import requestLogger from './logger';
 import getConnection from './db';
 import defineAppRoutes from './router';
 import Books from './schema.gql';
-
-const requestLogger = (req: Request, _: Response, next: Function): void => {
-  signale.log();
-  signale.log('############# REQUEST #############');
-  signale.log(`# [${req.method}] ${req.url}`);
-
-  if (Object.keys(req.params).length > 0) {
-    signale.log(`# query params: ${JSON.stringify(req.params, null)}`);
-  }
-
-  if (Object.keys(req.body).length > 0) {
-    signale.log(`# body: ${JSON.stringify(req.body, null, 2)}`);
-  }
-
-  signale.log('###################################');
-  signale.log();
-  next();
-};
 
 export default async (): Promise<Express> => {
   const app: Express = express();
