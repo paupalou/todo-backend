@@ -27,6 +27,7 @@ const getRequestToken = (req: Request): string => {
     return authorizationToken.slice(7, authorizationToken.length);
   }
 
+  console.log(req.cookies)
   const { token: cookieToken } = req.cookies;
   if (cookieToken) {
     return cookieToken;

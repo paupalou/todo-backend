@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import express, { Express, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import http, { Server } from 'http';
@@ -10,6 +10,11 @@ import requestLogger from './logger';
 import getConnection from './db';
 import defineAppRoutes from './router';
 import Books from './schema.gql';
+
+interface Context {
+  req: Request;
+  res: Response;
+}
 
 export default async (): Promise<Express> => {
   const app: Express = express();
@@ -23,7 +28,11 @@ export default async (): Promise<Express> => {
 
   // graphql
   const { typeDefs, resolvers } = Books;
-  const graphqlServer = new ApolloServer({ typeDefs, resolvers });
+  const graphqlServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: ({ req, res }: Context): Context => ({ req, res })
+  });
   graphqlServer.applyMiddleware({ app });
 
   // socket
