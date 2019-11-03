@@ -1,3 +1,4 @@
+import { UserInputError } from 'apollo-server-express';
 import signale from 'signale';
 
 import User from './model';
@@ -18,13 +19,22 @@ const getAllUsers = async (): Promise<Array<IUser>> => {
   return users;
 };
 
-const createUser = async (userParams: UserParams): Promise<boolean> => {
+const createUser = async (userParams: UserParams): Promise<IUser> => {
+  signale.await('UserService.createUser');
+  if (!userParams.username) {
+    const errorMsg = 'username cannto be empty';
+    signale.fatal(errorMsg);
+    throw new UserInputError(errorMsg);
+  }
+
   try {
-    await User.create(userParams);
-    return true;
+    const user = await User.create(userParams);
+    signale.success(`user ${userParams.username} created!`);
+    return user;
   } catch (e) {
-    signale.fatal(e);
-    return false;
+    const errorMsg = `user ${userParams.username} already taken`;
+    signale.fatal(errorMsg);
+    throw new UserInputError(errorMsg);
   }
 };
 

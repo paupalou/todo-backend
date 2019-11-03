@@ -23,7 +23,8 @@
     "mongoose": "^5.7.5",
     "mongoose-unique-validator": "^2.0.3",
     "signale": "^1.4.0",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "subscriptions-transport-ws": "^0.9.16"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.1",
@@ -32,7 +33,6 @@
     "@types/jest": "^24.0.18",
     "@types/jsonwebtoken": "^8.3.3",
     "@types/mockingoose": "^2.11.0",
-    "@types/mongoose": "^5.5.17",
     "@types/mongoose-unique-validator": "^1.0.2",
     "@types/node": "^12.7.5",
     "@types/signale": "^1.2.1",

@@ -14,10 +14,13 @@ const listOfDummyUsers: Array<Partial<IUser>> = [
   {
     _id: mongoose.Types.ObjectId().toString(),
     username: 'TEST2'
-  },
+  }
 ];
 
-const getDummyUser = (userId: string) => ({ ...dummyUser, _id: userId });
+const getDummyUser = (userId: string): Partial<IUser> => ({
+  ...dummyUser,
+  _id: userId
+});
 
 export default {
   findById: (userId: string): Partial<IUser> | undefined => {
@@ -42,5 +45,5 @@ export default {
 
     return [];
   },
-  create: (_: UserParams): boolean => true
+  create: (): boolean => true
 };

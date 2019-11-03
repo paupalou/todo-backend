@@ -35,20 +35,32 @@ const deleteTodo = (socket: SocketServer) => async ({
 }: UserTodoParams): Promise<boolean> => {
   try {
     const todo: ITodo = await Todo.findById(todoId);
-    if (todo.user.toString() === userId) {
-      await Todo.deleteOne(todo);
-      socket.to(userId).emit('TODO#DELETE', todoId);
-      signale.success(`todo ${todoId} deleted`);
-      return true;
+
+    if (!todo) {
+      signale.warn(`todo ${todoId} does not exists`);
+      throw 'todo does not exists';
     }
-    signale.warn(`user ${userId} does not belong todo ${todoId}`);
-    return false;
+
+    if (todo.user.toString() !== userId) {
+      signale.warn(`user ${userId} does not belong todo ${todoId}`);
+      throw 'Unauthorized';
+    }
+
+    await Todo.deleteOne(todo);
+    socket.to(userId).emit('TODO#DELETE', todoId);
+    signale.success(`todo ${todoId} deleted`);
+    return true;
   } catch (e) {
     return false;
   }
 };
 
 const getUserTodos = async (userId: string): Promise<Array<ITodo>> => {
+  if (!userId) {
+    signale.fatal('userId required');
+    throw Error('userId required');
+  }
+
   const userTodos = await Todo.find(
     { user: userId },
     'done title text created'

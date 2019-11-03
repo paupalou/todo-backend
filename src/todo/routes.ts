@@ -1,8 +1,8 @@
 enum ROUTES {
-  getUserTodos = '/todos',
-  createTodo = '/todos',
-  toggleTodo = '/todos/:todoId',
-  deleteTodo = '/todos/:todoId'
+  getUserTodos = '/api/todos',
+  createTodo = '/api/todos',
+  toggleTodo = '/api/todos/:todoId',
+  deleteTodo = '/api/todos/:todoId'
 }
 
 export default ROUTES;

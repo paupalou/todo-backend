@@ -1,4 +1,5 @@
-import { gql } from 'apollo-server-express';
+import { AuthenticationError } from 'apollo-server-express';
+import { Server as SocketServer } from 'socket.io';
 
 import Auth from './auth';
 
@@ -8,40 +9,13 @@ import { UserParams as User } from './user/interface';
 import TodoService from './todo/service';
 import { TodoParams as Todo } from './todo/interface';
 
-const typeDefs = gql`
-  type User {
-    _id: String
-    username: String
-    created: String
-  }
-
-  type Todo {
-    _id: String
-    title: String
-    text: String
-    created: String
-    done: Boolean
-  }
-
-  type LoginInfo {
-    userId: String!
-    username: String
-  }
-
-  type Query {
-    users: [User]
-    login(username: String): LoginInfo
-    tokenValidate: LoginInfo
-    getUserTodos(id: String): [Todo]
-  }
-`;
-
 interface LoginInfo {
   userId: string;
   username: string;
+  error?: string;
 }
 
-const resolvers = {
+const getResolvers = (socket: SocketServer) => ({
   Query: {
     users: (): Promise<User[]> => UserService.getAllUsers(),
     tokenValidate: async (
@@ -49,12 +23,16 @@ const resolvers = {
       __: any,
       context: any
     ): Promise<LoginInfo> => {
-      const { req } = context;
-      const token = Auth.getRequestToken(req);
-      const userId = await Auth.getUserIdFromToken(token);
-      if (userId) {
-        const { username, _id } = await UserService.getUserById(userId);
-        return { userId: _id, username };
+      try {
+        const { req } = context;
+        const token = Auth.getRequestToken(req);
+        const userId = await Auth.getUserIdFromToken(token);
+        if (userId) {
+          const { username, _id } = await UserService.getUserById(userId);
+          return { userId: _id, username };
+        }
+      } catch (e) {
+        throw new AuthenticationError('token not present');
       }
     },
     login: async (_: any, args: any, context: any): Promise<LoginInfo> => {
@@ -72,14 +50,58 @@ const resolvers = {
         };
       }
     },
-    getUserTodos: async (_: any, args: any): Promise<Todo[]> => {
-      const todos = await TodoService(undefined).getUserTodos(args.id);
-      return todos;
+    logout: async (_: any, __: any, context: any): Promise<boolean> => {
+      const { req, res } = context;
+      const token = Auth.getRequestToken(req);
+      const userId = await Auth.getUserIdFromToken(token);
+      if (userId) {
+        res.clearCookie('token', {
+          httpOnly: true,
+          sameSite: true
+        });
+        return true;
+      }
+
+      return false;
+    },
+    getUserTodos: async (_: any, __: any, context: any): Promise<Todo[]> => {
+      try {
+        const { req } = context;
+        const token = Auth.getRequestToken(req);
+        const userId = await Auth.getUserIdFromToken(token);
+        if (userId) {
+          const todos = await TodoService(undefined).getUserTodos(userId);
+          return todos;
+        }
+      } catch (e) {
+        throw new AuthenticationError('unauthorized');
+      }
+    }
+  },
+  Mutation: {
+    deleteTodo: async (
+      _: any,
+      { id: todoId }: any,
+      context: any
+    ): Promise<Partial<Todo>> => {
+      try {
+        const { req } = context;
+        const token = Auth.getRequestToken(req);
+        const userId = await Auth.getUserIdFromToken(token);
+        if (userId) {
+          await TodoService(socket).deleteTodo({
+            todoId,
+            userId
+          });
+          return { id: todoId };
+        }
+      } catch (e) {
+        throw new AuthenticationError('unauthorized');
+      }
     }
   }
-};
+});
 
 export default {
-  typeDefs,
-  resolvers
+  getResolvers
 };
